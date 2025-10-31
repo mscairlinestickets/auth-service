@@ -6,7 +6,7 @@ spring:
     password: postgres
     url: jdbc:postgresql://localhost:5432/airline-security
   jpa:
+    open-in-view: false
+    show-sql: true
     hibernate:
       ddl-auto: update
-      show-sql: true
-      open-in-view: false
