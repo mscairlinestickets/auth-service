@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: auth-service
+  datasource:
+    username: security
+    password: postgres
+    url: jdbc:postgresql://localhost:5432/airline-security
+  jpa:
+    hibernate:
+      ddl-auto: update
+      show-sql: true
+      open-in-view: false
