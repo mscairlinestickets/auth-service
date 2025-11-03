@@ -25,10 +25,10 @@ public class Scope {
 
     public static class SecurityScopes {
 
+        public static final String SCOPE_FLIGHT_READ = "FLIGHT:READ";
         public static final String SCOPE_FLIGHT_WRITE = "FLIGHT:WRITE";
         public static final String SCOPE_FLIGHT_UPDATE = "FLIGHT:UPDATE";
         public static final String SCOPE_FLIGHT_DELETE = "FLIGHT:DELETE";
-        public static final String SCOPE_FLIGHT_READ = "FLIGHT:READ";
         public static final String SCOPE_BOOKING_READ =  "SCOPE_BOOKING:READ";
 
     }

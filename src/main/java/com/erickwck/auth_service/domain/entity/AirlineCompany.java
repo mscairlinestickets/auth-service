@@ -40,6 +40,8 @@ public class AirlineCompany {
             inverseJoinColumns = @JoinColumn(name = "scope_id"))
     private Set<Scope> scopes;
 
+
+
     @ManyToMany
     @JoinTable(name = "tb_users_roles",
             joinColumns = @JoinColumn(name = "user_id"),

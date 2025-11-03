@@ -10,3 +10,13 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+
+jwt:
+  public:
+    key: classpath:app.pub
+  private:
+    key: classpath:app.key
+  issuer: ${spring.application.name}
+  expires-in: 240
+  refresh:
+    expires-in: 2592000
