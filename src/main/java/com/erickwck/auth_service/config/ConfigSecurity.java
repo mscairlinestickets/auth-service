@@ -1,6 +1,11 @@
 package com.erickwck.auth_service.config;
 
 
+import com.erickwck.auth_service.utils.JwtConfig;
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -10,6 +15,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -17,6 +24,11 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class ConfigSecurity {
 
+    private final JwtConfig jwtConfig;
+
+    public ConfigSecurity(JwtConfig jwtConfig) {
+        this.jwtConfig = jwtConfig;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -29,10 +41,17 @@ public class ConfigSecurity {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-
         return http.build();
     }
 
+
+    @Bean
+    public JwtEncoder jwtEncoder() {
+
+        JWK jwk = new RSAKey.Builder(jwtConfig.getPublicKey()).privateKey(jwtConfig.getPrivateKey()).build();
+        var jwkSet = new ImmutableJWKSet<>(new JWKSet(jwk));
+        return new NimbusJwtEncoder(jwkSet);
+    }
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {

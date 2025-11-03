@@ -36,4 +36,6 @@ public class Role {
     public static class RoleNames {
         public static final String ROLE_AIRLINE = "ROLE_AIRLINE";
     }
+
+
 }
