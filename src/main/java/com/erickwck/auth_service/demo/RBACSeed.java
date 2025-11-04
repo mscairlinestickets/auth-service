@@ -33,16 +33,21 @@ public class RBACSeed implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
+        Scope writeRead = ensureScope(SCOPE_FLIGHT_READ);
         Scope writeScope = ensureScope(SCOPE_FLIGHT_WRITE);
         Scope updateScope = ensureScope(SCOPE_FLIGHT_UPDATE);
         Scope deleteScope = ensureScope(SCOPE_FLIGHT_DELETE);
         Scope bookingRead = ensureScope(SCOPE_BOOKING_READ);
 
-        Role roleAirlineAdmin = ensureRole(ROLE_AIRLINE, Set.of(writeScope, updateScope, deleteScope,bookingRead));
+        Role roleAirlineAdmin = ensureRole(ROLE_AIRLINE, Set.of(writeScope, updateScope, deleteScope, bookingRead));
+        Role roleAirlineCustomer = ensureRole("ROLE_CUSTOMER", Set.of(writeRead));
 
-        AirlineCompany golAirline = ensureAirlineCompany("Gol Linhas Aéreas", "gol_air", "senha", "contato@gol.com", roleAirlineAdmin);
-        AirlineCompany azulAirline = ensureAirlineCompany("Azul Linhas Aéreas", "azul_air", "senha", "contato@azul.com", roleAirlineAdmin);
-        AirlineCompany latamAirline = ensureAirlineCompany("Latam Linhas Aéreas", "latam_air", "senha", "contato@latam.com", roleAirlineAdmin);
+        ensureAirlineCompany("Gol Linhas Aéreas", "gol_air", "senha", "contato@gol.com", roleAirlineAdmin);
+        ensureAirlineCompany("Azul Linhas Aéreas", "azul_air", "senha", "contato@azul.com", roleAirlineAdmin);
+        ensureAirlineCompany("Latam Linhas Aéreas", "latam_air", "senha", "contato@latam.com", roleAirlineAdmin);
+        ensureAirlineCompany("Delta Linhas Aéreas", "delta_air", "senha", "contato@delta.com", roleAirlineCustomer);
+
+
     }
 
     private Role ensureRole(String name, Set<Scope> scopes) {
