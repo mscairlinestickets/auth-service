@@ -3,9 +3,9 @@ services:
     image: postgres:16-alpine
     container_name: "auth-security"
     environment:
-      POSTGRES_DB: airline-security
-      POSTGRES_USER: security
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: airlinedb_security
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
     ports:
       - "5432:5432"
     healthcheck:
