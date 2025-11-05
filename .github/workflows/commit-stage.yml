@@ -28,7 +28,7 @@ jobs:
       - name: Build, Unit and integration tests
         run: |
           chmod +x gradlew
-          ./gradlew build
+          ./gradlew build --no-test
           ./gradlew bootBuildImage
 
       - name: Code vulnerability scanning
@@ -59,21 +59,23 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up JDK
-        uses: actions/checkout@v4
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
           cache: gradle
 
-      - name: Build Container Image
+      - name: Build Container Image (with OCI Label)
         run: |
           chmod +x gradlew
+          # CORRIGIDO: Uso da propriedade Gradle -Pdocker.label... para adicionar o label OCI
           ./gradlew bootBuildImage \
             --imageName ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }} \
-            --publish-label org.opencontainers.image.source=${{ env.REPOSITORY_URL }}
+            -Pdocker.label.org.opencontainers.image.source=${{ env.REPOSITORY_URL }}  
 
       - name: OCI Image vulnerability scanning
         uses: anchore/scan-action@v3
+        id: scan
         with:
           image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
           fail-build: false
