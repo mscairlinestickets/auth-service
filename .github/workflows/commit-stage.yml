@@ -28,7 +28,7 @@ jobs:
       - name: Build, Unit and integration tests
         run: |
           chmod +x gradlew
-          ./gradlew build --no-test
+          ./gradlew build -x test
           ./gradlew bootBuildImage
 
       - name: Code vulnerability scanning
