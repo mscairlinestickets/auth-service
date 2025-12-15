@@ -40,7 +40,8 @@ public class ConfigSecurity {
                             .anyRequest().authenticated();
                 })
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
     }
@@ -63,6 +64,7 @@ public class ConfigSecurity {
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().requestMatchers("/api/auth/.well-known/jwks.json");
     }
+
 }
 
 

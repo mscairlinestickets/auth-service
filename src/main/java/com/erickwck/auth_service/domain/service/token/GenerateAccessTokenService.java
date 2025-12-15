@@ -32,19 +32,19 @@ public class GenerateAccessTokenService {
     }
 
 
-    public Jwt generateAccessToken(AirlineCompany airlineCompany) {
+    public Jwt generateAccessToken(AirlineCompany userAirlineCompany) {
 
-        var roles = getRolesUsers(airlineCompany);
+        var roles = getRolesUsers(userAirlineCompany);
 
-        var scopes = getScopesUser(airlineCompany);
+        var scopes = getScopesUser(userAirlineCompany);
 
         var claims = JwtClaimsSet.builder()
                 .id(UUID.randomUUID().toString())
-                .subject(airlineCompany.getId().toString())
+                .subject(userAirlineCompany.getId().toString())
                 .issuer(jwtConfig.getIssuer())
                 .issuedAt(Instant.now())
                 .expiresAt(Instant.now().plusSeconds(jwtConfig.getExpiresIn()))
-                .claim("username", airlineCompany.getUsername())
+                .claim("username", userAirlineCompany.getUsername())
                 .claim("roles", roles)
                 .claim("scope", scopes).build();
 

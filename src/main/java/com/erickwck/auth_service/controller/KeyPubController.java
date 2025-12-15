@@ -30,6 +30,9 @@ public class KeyPubController {
                 .algorithm(JWSAlgorithm.RS256)
                 .keyUse(KeyUse.SIGNATURE)
                 .build();
+
         return Map.of("keys", List.of(jwt.toPublicJWK().toJSONObject()));
     }
+
+
 }
