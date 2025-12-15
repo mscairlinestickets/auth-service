@@ -17,14 +17,14 @@ spec:
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/path: /actuator/prometheus
-        prometheus.io/port: "9001"
+        prometheus.io/port: "9005"
     spec:
       containers:
         - name: auth-service
           image: auth-service
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 9001
+            - containerPort: 9005
           env:
             - name: BPL_JVM_THREAD_COUNT
               value: "50"
