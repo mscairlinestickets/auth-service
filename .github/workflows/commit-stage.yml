@@ -4,7 +4,7 @@ on: push
 env:
   REGISTRY: 234559571647.dkr.ecr.us-east-1.amazonaws.com
   GHCR_REGISTRY: ghcr.io                                   
-  IMAGE_NAME: msc/auth-service
+  IMAGE_NAME: auth-service
   VERSION: ${{ github.sha }}
 
 jobs:
@@ -100,7 +100,7 @@ jobs:
       - name: Build, tag, and push docker image to Amazon ECR
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: auth-service
+          REPOSITORY: msc/auth-service
           IMAGE_TAG: ${{ github.sha }}
         run: |
           chmod +x gradlew
