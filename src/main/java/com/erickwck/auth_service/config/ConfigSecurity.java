@@ -36,6 +36,7 @@ public class ConfigSecurity {
 
         http.authorizeHttpRequests(auth -> {
                     auth.requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                            .requestMatchers("/actuator/**").permitAll()
                             .requestMatchers("/api/auth/.well-known/jwks.json").permitAll()
                             .anyRequest().authenticated();
                 })
