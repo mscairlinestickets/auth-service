@@ -2,15 +2,15 @@ name: Commit Stage
 on: push
 
 env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  REGISTRY: 234559571647.dkr.ecr.us-east-1.amazonaws.com
+  GHCR_REGISTRY: ghcr.io                                   
+  IMAGE_NAME: auth-service
   VERSION: ${{ github.sha }}
-  REPOSITORY_URL: https://github.com/${{ github.repository }}
 
 jobs:
   build:
     name: Build and Test
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     permissions:
       contents: read
       security-events: write
@@ -22,38 +22,38 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
           cache: gradle
 
-      - name: Build, Unit and integration tests
+      - name: Build, unit test and integrations tests
         run: |
           chmod +x gradlew
-          ./gradlew build --no-test
+          ./gradlew build -x test
           ./gradlew bootBuildImage
 
       - name: Code vulnerability scanning
-        uses: anchore/scan-action@v4
+        uses: anchore/scan-action@v3
         id: scan
         with:
           path: "${{ github.workspace }}"
           fail-build: false
           severity-cutoff: high
 
-      - name: Upload vulnerability report
+      - name: Upload vunerability report
         uses: github/codeql-action/upload-sarif@v4
         if: success() || failure()
         with:
           sarif_files: ${{ steps.scan.outputs.sarif }}
-
   package:
     name: Package and Publish
     if: ${{ github.ref == 'refs/heads/main' }}
     needs: [ build ]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     permissions:
       contents: read
       packages: write
       security-events: write
+      id-token: write 
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -62,18 +62,17 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
           cache: gradle
 
-      - name: Build Container Image (with OCI Label)
+      - name: Build container image
         run: |
           chmod +x gradlew
           ./gradlew bootBuildImage \
-            --imageName ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }} \
-            -Pdocker.label.org.opencontainers.image.source=${{ env.REPOSITORY_URL }}
+            --imageName ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
 
-      - name: OCI Image vulnerability scanning
-        uses: anchore/scan-action@v4
+      - name: OCI image vulnerability scanning
+        uses: anchore/scan-action@v3
         id: scan
         with:
           image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
@@ -81,23 +80,29 @@ jobs:
           severity-cutoff: high
 
       - name: Upload vulnerability report
-        uses: github/codeql-action/upload-sarif@v4
+        uses: github/codeql-action/upload-sarif@v3
         if: success() || failure()
         with:
-          sarif_files: ${{ steps.scan.outputs.sarif }}
+          sarif_file: ${{ steps.scan.outputs.sarif }}
 
-      - name: Log into container registry
-        uses: docker/login-action@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5.1.0
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          aws-region: us-east-1
+          role-to-assume: arn:aws:iam::234559571647:role/workshop-nov-eks-github-role
+          role-session-name: gha-${{ github.run_id }}
+          
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Publish container image
-        run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
-
-      - name: Publish container image (latest)
+      - name: Build, tag, and push docker image to Amazon ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: auth-service
+          IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }} \
-           ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          chmod +x gradlew
+          ./gradlew bootBuildImage \
+            --imageName ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
