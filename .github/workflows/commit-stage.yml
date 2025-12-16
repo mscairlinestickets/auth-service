@@ -4,7 +4,7 @@ on: push
 env:
   REGISTRY: 234559571647.dkr.ecr.us-east-1.amazonaws.com
   GHCR_REGISTRY: ghcr.io                                   
-  IMAGE_NAME: auth-service
+  IMAGE_NAME: msc/auth-service
   VERSION: ${{ github.sha }}
 
 jobs:
