@@ -9,7 +9,7 @@ concurrency: acceptance
 env:
   OWNER: mscairlinestickets
   REGISTRY: 234559571647.dkr.ecr.us-east-1.amazonaws.com
-  APP_REPO: auth-service
+  APP_REPO: msc/auth-service   # precisa bater com o nome do repositório no ECR
   DEPLOY_REPO: airline-deployment
   VERSION: ${{ github.sha }}
 
@@ -27,7 +27,6 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - run: echo "Running performance tests"
-
 
   security:
     name: Security Tests
@@ -47,8 +46,9 @@ jobs:
           token: ${{ secrets.DISPATCH_TOKEN }}   
           repository: ${{ env.OWNER }}/${{ env.DEPLOY_REPO }}
           event-type: app_delivery
-          client-payload: '{
+          client-payload: |
+            {
               "app_image": "${{ env.REGISTRY }}/${{ env.APP_REPO }}",
-              "app_name": "${{ env.APP_REPO }}",
+              "app_name": "auth-service",
               "app_version": "${{ env.VERSION }}"
-            }'
+            }
