@@ -9,7 +9,8 @@ concurrency: acceptance
 env:
   OWNER: mscairlinestickets
   REGISTRY: 234559571647.dkr.ecr.us-east-1.amazonaws.com
-  APP_REPO: msc/auth-service   # precisa bater com o nome do repositório no ECR
+  ECR_REPO: msc/auth-service     
+  APP_NAME: auth-service            
   DEPLOY_REPO: airline-deployment
   VERSION: ${{ github.sha }}
 
@@ -43,12 +44,12 @@ jobs:
       - name: Deliver application to production
         uses: peter-evans/repository-dispatch@v4
         with:
-          token: ${{ secrets.DISPATCH_TOKEN }}   
+          token: ${{ secrets.DISPATCH_TOKEN }}
           repository: ${{ env.OWNER }}/${{ env.DEPLOY_REPO }}
           event-type: app_delivery
           client-payload: |
             {
-              "app_image": "${{ env.REGISTRY }}/${{ env.APP_REPO }}",
-              "app_name": "auth-service",
+              "app_image": "${{ env.REGISTRY }}/${{ env.ECR_REPO }}",
+              "app_name": "${{ env.APP_NAME }}",
               "app_version": "${{ env.VERSION }}"
             }
