@@ -2,7 +2,7 @@
 
 ## 🎯 Objetivo
 
-Este documento descreve a estratégia de Controle de Acesso Baseado em Funções (RBAC) utilizada nos microsserviços do ecossistema de reservas aéreas. O objetivo é garantir um controle de acesso seguro, escalável e simples, baseado em funções de usuário e permissões granulares (escopos).
+Este documento descreve a estratégia de Controle de Acesso Baseado em Funções (RBAC) utilizada nos microsserviços do ecossistema de reservas aéreas. Objetivo é garantir um controle de acesso seguro, escalável e simples, baseado em funções de usuário e permissões granulares (escopos).
 
 ---
 
